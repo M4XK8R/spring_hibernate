@@ -2,10 +2,12 @@ package hiber.dao;
 
 import hiber.model.User;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import utils.LoggingUtil;
@@ -33,27 +35,32 @@ public class UserDaoImp implements UserDao {
   }
 
   @Override
-  public User getCarOwner(
+  @SuppressWarnings("unchecked")
+  public Optional<User> getCarByModelAndSeries(
       String model,
       int series
   ) {
     final byte MAX_RESULTS_ALLOWED = 1;
+    String hql = "from User where "
+        + "car.model = :model "
+        + "and "
+        + "car.series = :series";
     try {
-      return (User) sessionFactory
+      TypedQuery<User> query = sessionFactory
           .getCurrentSession()
-          .createQuery(
-              "from User where "
-                  + "car.model = :model "
-                  + "and "
-                  + "car.series = :series"
-          )
+          .createQuery(hql);
+
+      query
           .setParameter("model", model)
           .setParameter("series", series)
-          .setMaxResults(MAX_RESULTS_ALLOWED)
-          .getSingleResult();
+          .setMaxResults(MAX_RESULTS_ALLOWED);
+
+      return Optional.ofNullable(
+          query.getSingleResult()
+      );
     } catch (NoResultException | HibernateException | ClassCastException e) {
-      LoggingUtil.printExceptionInfo("getCarOwner", e);
-      return null;
+      LoggingUtil.printExceptionInfo("getCarByModelAndSeries", e);
+      return Optional.empty();
     }
   }
 }

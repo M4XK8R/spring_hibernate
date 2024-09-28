@@ -4,7 +4,6 @@ import hiber.config.AppConfig;
 import hiber.model.Car;
 import hiber.model.User;
 import hiber.service.UserService;
-import java.util.stream.Collectors;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.SQLException;
@@ -66,7 +65,7 @@ public class MainApp {
     for (Car car : cars) {
       System.out.println(
           "Car owner User is " +
-              userService.getCarOwner(
+              userService.getCarByModelAndSeries(
                   car.getModel(),
                   car.getSeries()
               )
@@ -75,7 +74,7 @@ public class MainApp {
 
     System.out.println(
         "Car owner User is " +
-            userService.getCarOwner(
+            userService.getCarByModelAndSeries(
                 "rjwklw",
                 374190
             )

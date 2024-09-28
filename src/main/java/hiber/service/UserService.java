@@ -3,6 +3,7 @@ package hiber.service;
 import hiber.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -10,5 +11,5 @@ public interface UserService {
 
   List<User> listUsers();
 
-  User getCarOwner(String model, int series);
+  Optional<User> getCarByModelAndSeries(String model, int series);
 }
